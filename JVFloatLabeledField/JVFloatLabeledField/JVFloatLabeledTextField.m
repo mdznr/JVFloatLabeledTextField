@@ -27,8 +27,12 @@
 
 #import "JVFloatLabeledTextField.h"
 
+#define ANIMATION_DURATION 0.3f
+
 @interface JVFloatLabeledTextField ()
+
 @property (nonatomic) BOOL isFloatingLabelHidden;
+
 @end
 
 @implementation JVFloatLabeledTextField
@@ -84,12 +88,10 @@
             [self hideFloatingLabel];
         }
         else {
-            _floatingLabel.textColor = self.floatingLabelActiveTextColor;
             [self showFloatingLabel];
         }
     }
     else {
-        _floatingLabel.textColor = self.floatingLabelTextColor;
         if (!self.text || 0 == [self.text length]) {
             [self hideFloatingLabel];
         }
@@ -100,7 +102,7 @@
 - (void)showFloatingLabel
 {
 	if ( _isFloatingLabelHidden ) {
-		[UIView animateWithDuration:0.3f
+		[UIView animateWithDuration:ANIMATION_DURATION
 							  delay:0.0f
 			 usingSpringWithDamping:1.0f
 			  initialSpringVelocity:1.0f
@@ -121,7 +123,7 @@
 - (void)hideFloatingLabel
 {
 	if ( !_isFloatingLabelHidden ) {
-		[UIView animateWithDuration:0.3f
+		[UIView animateWithDuration:ANIMATION_DURATION
 							  delay:0.0f
 			 usingSpringWithDamping:1.0f
 			  initialSpringVelocity:1.0f
@@ -130,11 +132,51 @@
 							 _floatingLabel.alpha = 0.0f;
 						 }
 						 completion:^(BOOL finished) {
-							 _floatingLabel.frame = CGRectMake(_floatingLabel.frame.origin.x, _floatingLabel.font.lineHeight,
-															   _floatingLabel.frame.size.width, _floatingLabel.frame.size.height);
+							 _floatingLabel.frame = CGRectMake(_floatingLabel.frame.origin.x,
+															   _floatingLabel.font.lineHeight,
+															   _floatingLabel.frame.size.width,
+															   _floatingLabel.frame.size.height);
 							 _isFloatingLabelHidden = YES;
 						 }];
 	}
+}
+
+#warning handle tintColor
+- (void)tintColorDidChange
+{
+	[super tintColorDidChange];
+}
+
+#pragma mark Responder
+
+- (BOOL)becomeFirstResponder
+{
+	[UIView animateWithDuration:ANIMATION_DURATION
+						  delay:0.0f
+		 usingSpringWithDamping:1.0f
+		  initialSpringVelocity:1.0f
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{
+						 _floatingLabel.textColor = _floatingLabelActiveTextColor;
+					 }
+					 completion:^(BOOL finished) {}];
+	
+	return [super becomeFirstResponder];
+}
+
+- (BOOL)resignFirstResponder
+{
+	[UIView animateWithDuration:ANIMATION_DURATION
+						  delay:0.0f
+		 usingSpringWithDamping:1.0f
+		  initialSpringVelocity:1.0f
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{
+						 _floatingLabel.textColor = _floatingLabelTextColor;
+					 }
+					 completion:^(BOOL finished) {}];
+	
+	return [super resignFirstResponder];
 }
 
 @end
