@@ -42,10 +42,10 @@
         _floatingLabel.alpha = 0.0f;
         [self addSubview:_floatingLabel];
         
-        self.floatingLabelTextColor = [UIColor grayColor];
-        self.floatingLabelActiveTextColor = [UIColor blueColor];
+        _floatingLabelTextColor = [UIColor grayColor];
+        _floatingLabelActiveTextColor = [UIColor blueColor];
         
-        self.isFloatingLabelHidden = YES;
+        _isFloatingLabelHidden = YES;
     }
     return self;
 }
@@ -96,30 +96,45 @@
     }
 }
 
+#warning starting and ending editing of text before completion of animation causes issues with label animation
 - (void)showFloatingLabel
 {
-    if (self.isFloatingLabelHidden) {
-        [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseOut animations:^{
-            _floatingLabel.alpha = 1.0f;
-            _floatingLabel.frame = CGRectMake(_floatingLabel.frame.origin.x, 2.0f,
-                                              _floatingLabel.frame.size.width, _floatingLabel.frame.size.height);
-        } completion:^(BOOL finished) {
-            self.isFloatingLabelHidden = NO;
-        }];
-    }
+	if ( _isFloatingLabelHidden ) {
+		[UIView animateWithDuration:0.3f
+							  delay:0.0f
+			 usingSpringWithDamping:1.0f
+			  initialSpringVelocity:1.0f
+							options:UIViewAnimationOptionBeginFromCurrentState
+						 animations:^{
+							 _floatingLabel.alpha = 1.0f;
+							 _floatingLabel.frame = CGRectMake(_floatingLabel.frame.origin.x,
+															   2.0f,
+															   _floatingLabel.frame.size.width,
+															   _floatingLabel.frame.size.height);
+						 }
+						 completion:^(BOOL finished) {
+							 _isFloatingLabelHidden = NO;
+						 }];
+	}
 }
 
 - (void)hideFloatingLabel
 {
-    if (!self.isFloatingLabelHidden) {
-        [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseIn animations:^{
-            _floatingLabel.alpha = 0.0f;
-        } completion:^(BOOL finished) {
-            _floatingLabel.frame = CGRectMake(_floatingLabel.frame.origin.x, _floatingLabel.font.lineHeight,
-                                              _floatingLabel.frame.size.width, _floatingLabel.frame.size.height);
-            self.isFloatingLabelHidden = YES;
-        }];
-    }
+	if ( !_isFloatingLabelHidden ) {
+		[UIView animateWithDuration:0.3f
+							  delay:0.0f
+			 usingSpringWithDamping:1.0f
+			  initialSpringVelocity:1.0f
+							options:UIViewAnimationOptionBeginFromCurrentState
+						 animations:^{
+							 _floatingLabel.alpha = 0.0f;
+						 }
+						 completion:^(BOOL finished) {
+							 _floatingLabel.frame = CGRectMake(_floatingLabel.frame.origin.x, _floatingLabel.font.lineHeight,
+															   _floatingLabel.frame.size.width, _floatingLabel.frame.size.height);
+							 _isFloatingLabelHidden = YES;
+						 }];
+	}
 }
 
 @end
